@@ -1,1 +1,2 @@
 salesforce/config.py
+**/*.pyc
