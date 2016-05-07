@@ -1,0 +1,10 @@
+What's the word?
+<br>{{ content }}
+
+<p>Print out some contacts</p>
+<br>{% for contact in contact_list %}
+<br><br>{{ contact.FirstName }} {{ contact.LastName }}
+<Br>{% if contact.Email %}
+{{ contact.Email }}
+{% endif %}
+<br>{% endfor %}
