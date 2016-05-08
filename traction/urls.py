@@ -17,6 +17,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
+	# just go straight to app
 	url(r'^salesforce/', include('salesforce.urls')),
-    url(r'^admin/', admin.site.urls),
+	url(r'^$', include('salesforce.urls')),
 ]

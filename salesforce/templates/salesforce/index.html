@@ -1,10 +1,22 @@
-What's the word?
-<br>{{ content }}
+{% extends 'base_template.html' %}
 
-<p>Print out some contacts</p>
-<br>{% for contact in contact_list %}
-<br><br>{{ contact.FirstName }} {{ contact.LastName }}
-<Br>{% if contact.Email %}
-{{ contact.Email }}
-{% endif %}
-<br>{% endfor %}
+{% block content %}
+	What's the word?
+	<br>{{ content }}
+
+	<p>Print out some contacts</p>
+	<br>{% for contact in contact_list %}
+	<br><br>{{ contact.FirstName }} {{ contact.LastName }}
+	<Br>{% if contact.Email %}
+	{{ contact.Email }}
+	{% endif %}
+	<br>{% endfor %}
+
+	<br><br>Name given: {{ contact_name }}
+	<form action='' method='get'>
+		{% csrf_token %}
+		{{ form.as_p }}
+		<button type='submit' value='submit'>Search!</button>
+    </form>
+
+{% endblock %}
