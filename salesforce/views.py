@@ -15,21 +15,29 @@ def index(request):
 	form_class = SearchForm
 	test = "Hello creator"
 
-	template = loader.get_template('salesforce/index.html')
 	context = {
 		'content': test,
 		'form': form_class,
 		# 'contact_list': query_contacts['records'],
 	}
 
-	if request.method == 'GET':
-		print "IN GET METHOD"
-		form = form_class(data=request.GET)
+	# TODO show errors if not valid
+	# show error messages
+	if request.method == 'POST':
+		print "IN POST METHOD"
+		form = form_class(request.POST)
 
 		if form.is_valid():
-			name = request.GET.get('contact_name')
-			context['contact_name'] = name
+			print "form is valid!"
+			context['filters'] = request.POST.get('filters')
+			context['name'] = request.POST.get('name')
+			print "filters chosen:"
+			print request.POST.getlist('filters')
 
+			return HttpResponseRedirect('/')
+		else:
+			print "errors: "
+			print form.errors
 	# return HttpResponse("Hello World!")
 	# return HttpResponse(template.render(context, request))
 	return render(request, 'salesforce/index.html', context)
@@ -39,34 +47,51 @@ def index(request):
 
 def contact(request):
     form_class = ContactForm
+
+    print "Trying to login"
+    (isLoggedIn, sf) = salesforce_login()
+    if isLoggedIn:
+    	print "hurrah logged in check passes"
     
     return render(request, 'salesforce/contact.html', {
         'form': form_class,
     })
 
-def get_name(request):
-	if request.method =='POST':
-		form = NameForm(request.POST)
-		if form.is_valid():
-			return HttpResponseDirect('/thanks/')
+def salesforce_login(filters):
+	try: 
+		sf = Salesforce(
+			username=config.username, 
+			# password=config.password,
+			password=config.username,
+			security_token=config.security_token
+			)
+		print "\nLogged in\n"
+		return (True, sf)
+	# except SalesforceAuthenticationFailed: 
+	# 	print "Error logging into Salesforce"
+	# exception SalesforceAuthenticationFailed doesn't work, need to use wildcard
+	except: 
+		print "\nError logging into Salesforce\n"
 
-	else: 
-		form = NameForm()
 
-	return render(request, 'salesforce/index.html', {'form': form})
-
-def get_salesforce_data():
+def get_salesforce_data(filters):
+	# need filter and name of filters 
 	print "username " + config.username
 
-	#login
-	sf = Salesforce(
-		username=config.username, 
-		password=config.password,
-		security_token=config.security_token
-		)
-	print "connected"
+	#
 
-	return sf.query_all("SELECT id, FirstName, LastName, Email FROM Contact")
+	print "connected"
+	query_select = "id, FirstName, LastName, Email"
+	query_from = 'Contact'
+	query_where = 
+	for filter in filters:
+		if filter = 
+	query = "SELECT " + query_select + \
+		" FROM " + query_from + \
+		" WHERE " + query_where 
+	print 'query is:\n' + query
+
+	# return sf.query_all("SELECT id, FirstName, LastName, Email FROM Contact")
 	
 
 '''
