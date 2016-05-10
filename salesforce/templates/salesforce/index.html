@@ -1,18 +1,9 @@
 {% extends 'base_template.html' %}
 
 {% block content %}
-	What's the word?
-	<br>{{ content }}
-
-	<p>Print out some contacts</p>
-	<br>{% for contact in contact_list %}
-	<br><br>{{ contact.FirstName }} {{ contact.LastName }}
-	<Br>{% if contact.Email %}
-	{{ contact.Email }}
-	{% endif %}
-	<br>{% endfor %}
-
-	<br>  
+	
+	<h1>Quick Contact Search</h1>  
+	
 	{% if form.errors %}
 	    {% for field in form %}
 	        {% for error in field.errors %}
@@ -28,11 +19,22 @@
 	    {% endfor %}
 	{% endif %}
 
-	<br><br>Name given: {{ name }}
 	<form action='' method='post'>
 		{% csrf_token %}
 		{{ form.as_p }}
 		<button type='submit' value='submit'>Search!</button>
     </form>
+
+    {% if contact_list %}
+    <p><h2>Contacts</h2>
+    	{% for Contact in contact_list %}
+    		<div class="contact">
+    			<br><b>Id:</b> {{ Contact.Id }}
+    			<br><b>Name: </b>{{ Contact.Name }}
+    			<br><b>Email: </b>{{ Contact.Email }}
+    			<br><b>Account: </b>{{ Contact.AccountName }}
+    		</div>
+    	{% endfor %}
+    {% endif %}
 
 {% endblock %}
