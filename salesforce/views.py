@@ -48,8 +48,13 @@ def index(request):
 			# print 'LastName ' + form_fields['LastName']
 
 			query_result = query_salesforce(form_fields)
-			context['contact_list'] = parse_query_result(query_result)
-			# print 'contact list ', context['contact_list']
+			contact_list = []
+			if query_result['totalSize'] > 0: 
+				context['contact_list'] = parse_query_result(query_result)
+				print 'contact list ', context['contact_list']
+			else: 
+				context['no_query_result_msg'] = "No results were returned."
+
 
 		else:
 			print "ERRORS in form: "
@@ -86,11 +91,11 @@ def query_salesforce(form_fields):
 		query = "SELECT " + query_select + \
 			" FROM " + query_from + \
 			" WHERE " + query_where 
-		# print 'query is:\n' + query
+		print 'query is:\n' + query
 
 		query_result = sf.query_all(query)
-		# print "query result: ", query_result
-		# return query_result
+		print "query result: ", query_result
+		return query_result
 
 def salesforce_login():
 	try: 
@@ -107,15 +112,18 @@ def salesforce_login():
 
 def parse_query_result(query_result):
 	contact_list = []
-	for obj in query_result['records']:
-		contact = OrderedDict()
-		contact['Id'] = obj['Id']
-		contact['Name'] = obj['Name']
-		contact['Email'] = obj['Email']
-		contact['AccountName'] = obj['Account']['Name']
-		print "\ncontact: ", contact
-		contact_list.append(contact)
-	return contact_list
+	if query_result['totalSize'] > 0:
+		for obj in query_result['records']:
+			contact = OrderedDict()
+			contact['Id'] = obj['Id']
+			contact['Name'] = obj['Name']
+			contact['Email'] = obj['Email']
+			contact['AccountName'] = obj['Account']['Name']
+			print "\ncontact: ", contact
+			contact_list.append(contact)
+		return contact_list
+	else:
+		return False
 
 
 '''

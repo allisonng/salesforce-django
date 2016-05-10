@@ -3,7 +3,6 @@
 {% block content %}
 	
 	<h1>Quick Contact Search</h1>  
-	
 	{% if form.errors %}
 	    {% for field in form %}
 	        {% for error in field.errors %}
@@ -35,6 +34,8 @@
     			<br><b>Account: </b>{{ Contact.AccountName }}
     		</div>
     	{% endfor %}
+    {% elif no_query_result_msg %}
+    	<br>{{ no_query_result_msg }}
     {% endif %}
 
 {% endblock %}
