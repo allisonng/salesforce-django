@@ -58,19 +58,22 @@ class SearchForm(forms.Form):
  							required=False,
  							)	
 
-	# TODO 
-	# http://stackoverflow.com/questions/25457695/django-must-have-at-least-one-form-field-filled-in
+	def clean(self):
+		print "being cleaned"
+		isFormEmpty = True
+		cleaned_data = super(SearchForm, self).clean()
+		print "CLEANED DATA ", cleaned_data
+
+		for field_value in cleaned_data.itervalues():
+			if field_value:
+				isFormEmpty = False
+				break
+		if isFormEmpty:
+			raise forms.ValidationError('You must input at least one value', code='invalid')
+		return cleaned_data
 	'''
 	def clean_filters(self):
 		if len(self.cleaned_data['filters']) < 1:
 			raise forms.ValidationError('Please select at least 1')
 		return self.cleaned_data['filters']
 	'''
-
-class ContactForm(forms.Form):
-    contact_name = forms.CharField(required=True)
-    contact_email = forms.EmailField(required=True)
-    content = forms.CharField(
-        required=True,
-        widget=forms.Textarea
-    )

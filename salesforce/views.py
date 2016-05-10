@@ -1,6 +1,6 @@
 # from django.shortcuts import render
 from django.shortcuts import render
-from .forms import ContactForm, SearchForm
+from .forms import SearchForm
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -14,30 +14,23 @@ import config # holds confidential login infoo
 # Create your views here.
 def index(request):
 	# query_contacts = query_salesforce()
-	form_class = SearchForm
-
-	context = {
-		'form': form_class,
-	}
-
+	
+	form = SearchForm
+	context = {}
 	# TODO show errors if not valid
 	# show error messages
 	if request.method == 'POST':
-		print "IN POST METHOD"
-		form = form_class(request.POST)
+		form = SearchForm(request.POST)
 
+		print "checking if valid"
 		if form.is_valid():
-			print "form is valid!"
-
 			form_fields = OrderedDict()
-			print "dept name" + form.cleaned_data['dept_name']
 			form_fields['Department'] = form.cleaned_data['dept_name']
 			form_fields['Account'] = form.cleaned_data['account_name']
 			form_fields['MailingCity'] = form.cleaned_data['city_name']
 			form_fields['MailingCountry'] = form.cleaned_data['country_name']
 			form_fields['FirstName'] = form.cleaned_data['first_name']
 			form_fields['LastName'] = form.cleaned_data['last_name']
-
 
 			# print "filters chosen:"
 			# print 'Department ' + form_fields['Department']
@@ -53,12 +46,9 @@ def index(request):
 				context['contact_list'] = parse_query_result(query_result)
 				print 'contact list ', context['contact_list']
 			else: 
-				context['no_query_result_msg'] = "No results were returned."
+				context['error_no_query'] = "No results were returned."
 
-
-		else:
-			print "ERRORS in form: "
-			print form.errors
+	context['form'] = form
 	return render(request, 'salesforce/index.html', context)
 
 	#https://docs.djangoproject.com/en/1.9/intro/tutorial03/

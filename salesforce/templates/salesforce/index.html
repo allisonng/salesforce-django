@@ -3,24 +3,17 @@
 {% block content %}
 	
 	<h1>Quick Contact Search</h1>  
-	{% if form.errors %}
-	    {% for field in form %}
-	        {% for error in field.errors %}
-	            <div class="alert alert-error">
-	                <strong>{{ error|escape }}</strong>
-	            </div>
-	        {% endfor %}
-	    {% endfor %}
-	    {% for error in form.non_field_errors %}
-	        <div class="alert alert-error">
-	            <strong>{{ error|escape }}</strong>
-	        </div>
-	    {% endfor %}
-	{% endif %}
 
-	<form action='' method='post'>
+	<form action='' method='POST'>
 		{% csrf_token %}
 		{{ form.as_p }}
+		{% if form.errors %}
+		    {% for error in form.non_field_errors %}
+		        <div class="alert alert-error">
+		        </div>
+			<!--<strong>{{ error|escape }}</strong> repeats itself otherwise-->
+		    {% endfor %}
+		{% endif %}
 		<button type='submit' value='submit'>Search!</button>
     </form>
 
@@ -34,8 +27,8 @@
     			<br><b>Account: </b>{{ Contact.AccountName }}
     		</div>
     	{% endfor %}
-    {% elif no_query_result_msg %}
-    	<br>{{ no_query_result_msg }}
+    {% elif error_no_query %}
+    	<br>{{ error_no_query }}
     {% endif %}
 
 {% endblock %}
