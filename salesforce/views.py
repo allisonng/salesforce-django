@@ -40,13 +40,18 @@ def index(request):
 			# print 'FirstName ' + form_fields['FirstName']
 			# print 'LastName ' + form_fields['LastName']
 
-			query_result = query_salesforce(form_fields)
-			contact_list = []
-			if query_result['totalSize'] > 0: 
-				context['contact_list'] = parse_query_result(query_result)
-				print 'contact list ', context['contact_list']
-			else: 
-				context['error_no_query'] = "No results were returned."
+			(is_logged_in, sf_conn) = salesforce_login()
+			print "Am I Logged in?", is_logged_in
+			print "sf conn", sf_conn
+			if is_logged_in:
+				query_result = query_salesforce(form_fields, sf_conn)
+				if query_result['totalSize'] > 0:  
+						context['contact_list'] = parse_query_result(query_result)
+						print 'contact list ', context['contact_list']
+				else: 
+					context['error_msg'] = "No results were returned."
+			else:
+				context['error_msg'] = "Cannot login" 
 
 	context['form'] = form
 	return render(request, 'salesforce/index.html', context)
@@ -54,12 +59,13 @@ def index(request):
 	#https://docs.djangoproject.com/en/1.9/intro/tutorial03/
 	# should use render() and get_http_and_404
 
-def query_salesforce(form_fields):
+def query_salesforce(form_fields, sf_conn):
 	# sf being the salesforce connection
-	(isLoggedIn, sf) = salesforce_login()
+	# loginTupple = (isLoggedIn, sf) 
+	# loginTuple = salesforce_login()
+	# print "Logintuple", loginTuple
 
-	if isLoggedIn:
-		print "Grabbing salesforce data"
+	if sf_conn:
 		query_select = "Id, Name, Email, Account.Name"
 		query_from = 'Contact'
 		query_where = ''
@@ -83,22 +89,30 @@ def query_salesforce(form_fields):
 			" WHERE " + query_where 
 		print 'query is:\n' + query
 
-		query_result = sf.query_all(query)
+		query_result = sf_conn.query_all(query)
 		print "query result: ", query_result
 		return query_result
+	else:
+		return
 
 def salesforce_login():
+	loginInfo = ()
 	try: 
+		print config.USERNAME
 		sf = Salesforce(
-			username=config.username, 
-			password=config.password,
-			security_token=config.security_token
+			username=config.USERNAME, 
+			password=config.PASSWORD,
+			security_token=config.SECURITY_TOKEN,
 			)
 		print "\nLogged in\n"
-		return (True, sf)
+		loginInfo = (True, sf)
 	# exception SalesforceAuthenticationFailed doesn't work, need to use wildcard
 	except: 
-		print "\nError logging into Salesforce\n"
+		print "Salesforce login error. Cannot login."
+		loginInfo = (False, None)
+		raise 
+	finally:
+		return loginInfo
 
 def parse_query_result(query_result):
 	contact_list = []
@@ -112,9 +126,8 @@ def parse_query_result(query_result):
 			print "\ncontact: ", contact
 			contact_list.append(contact)
 		return contact_list
-	else:
-		return False
-
+	else: 
+		return
 
 '''
 
