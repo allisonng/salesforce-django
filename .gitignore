@@ -1,6 +1,7 @@
 venv
 **/config.py
 salesforce/initial_data_insertion.py
+**/test.py
 *.pyc
 staticfiles
 .env

@@ -1,15 +1,15 @@
 # from django.shortcuts import render
-from django.shortcuts import render
-from .forms import SearchForm
-
 from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
 from django.template import loader
-
-from simple_salesforce import Salesforce
 
 from collections import OrderedDict
 
+from simple_salesforce import Salesforce
+from .forms import SearchForm
+
 import os
+
 
 def index(request):
 	form = SearchForm
@@ -40,17 +40,12 @@ def index(request):
 	context['form'] = form
 	return render(request, 'salesforce/index.html', context)
 
-	#https://docs.djangoproject.com/en/1.9/intro/tutorial03/
-	# should use render() and get_http_and_404
-
 def query_salesforce(form_fields, sf_conn):
 	# sf being the salesforce connection
-	# loginTupple = (isLoggedIn, sf) 
-	# loginTuple = salesforce_login()
-	# print "Logintuple", loginTuple
+
 
 	if sf_conn:
-		query_select = "Id, Name, Email, Account.Name"
+		query_select = "Id, Name, Phone, Email, Account.Name"
 		query_from = 'Contact'
 		query_where = ''
 		for key, value in form_fields.items():
@@ -82,11 +77,6 @@ def query_salesforce(form_fields, sf_conn):
 def salesforce_login():
 	loginInfo = ()
 	try: 
-		# sf = Salesforce(
-		# 	username=config.USERNAME, 
-		# 	password=config.PASSWORD,
-		# 	security_token=config.SECURITY_TOKEN,
-		# 	)
 		sf = Salesforce(
 			username=os.environ['SF_USERNAME'],
 			password=os.environ['SF_PASSWORD'],
@@ -116,8 +106,8 @@ def parse_query_result(query_result):
 	else: 
 		return
 
-'''
 
+'''
 	To get First name of first contact:
 	name = query['records'][0]['firstName'] (inner ordereddict is a list)
 	[0] being first contact in list
@@ -145,6 +135,5 @@ def parse_query_result(query_result):
 	)]
 
 	)
-
 
 '''
