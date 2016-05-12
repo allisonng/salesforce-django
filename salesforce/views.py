@@ -9,7 +9,6 @@ from simple_salesforce import Salesforce
 
 from collections import OrderedDict
 
-# import config # holds confidential login infoo
 import os
 
 def index(request):
