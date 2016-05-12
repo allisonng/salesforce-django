@@ -62,10 +62,10 @@ def query_salesforce(form_fields, sf_conn):
 					query_where += " AND "
 
 				if key == 'Account':
-					query_where += 'Account.Name=\'' + value + '\''
+					query_where += 'Account.Name LIKE \'' + value + '%\''
 				else:
 					query_where = query_where + key + \
-								'=\'' + value + '\''
+								' LIKE \'' + value + '%\''
 		# print "query where" + query_where
 
 		query = "SELECT " + query_select + \
