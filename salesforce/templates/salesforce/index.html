@@ -4,6 +4,19 @@
 	
 	<h1>Quick Contact Search</h1>  
 
+	<p><h3>About this app</h3>
+	<ul>
+		<li>It's using a salesforce library to hook up to the REST salesforce API</li>
+		<li>Written in django dur</li>
+		<li>The goal of this was: 'make a simple web app that loads data from Salesforce API'</li>
+		<li><b>limited datset of 24 contacts</b></li>
+		<li> You can search for Account Names ('Valve', 'EA Games', 'Gears of War', 'sForce')</li>
+		<li>Example Names: ('Olivia Wilde', 'Andy Young', 'John *', etc..)</li>
+		<li>Example Departments: (Finance, Technology, Administration, Production, Facilities, Operations)</li>
+		<li>TODO For myself: Add some tests, add regex, make this look less early 2000s</li>
+	</ul>
+	</p>
+
 	<form action='' method='POST'>
 		{% csrf_token %}
 		{{ form.as_p }}
