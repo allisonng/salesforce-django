@@ -27,8 +27,8 @@
     			<br><b>Account: </b>{{ Contact.AccountName }}
     		</div>
     	{% endfor %}
-    {% elif error_no_query %}
-    	<br>{{ error_no_query }}
+    {% elif error_msg %}
+    	<br>ERROR: {{ error_msg }}
     {% endif %}
 
 {% endblock %}

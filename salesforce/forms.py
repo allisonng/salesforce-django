@@ -40,6 +40,7 @@ class SearchForm(forms.Form):
 	account_name = forms.CharField(label=field_choices['Account'],
 							max_length=100,
  							required=False,
+ 							initial='EA ',
  							)
 	city_name = forms.CharField(label=field_choices['MailingCity'],
 							max_length=100,
@@ -59,10 +60,8 @@ class SearchForm(forms.Form):
  							)	
 
 	def clean(self):
-		print "being cleaned"
 		isFormEmpty = True
 		cleaned_data = super(SearchForm, self).clean()
-		print "CLEANED DATA ", cleaned_data
 
 		for field_value in cleaned_data.itervalues():
 			if field_value:

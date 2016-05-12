@@ -1,0 +1,6 @@
+Django==1.9.5
+gunicorn==19.4.5
+whitenoise==3.0
+requests==2.10.0
+simple-salesforce==0.68.1
+whitenoise==3.0

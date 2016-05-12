@@ -1,3 +1,7 @@
-salesforce/config.py
+venv
+**/config.py
 salesforce/initial_data_insertion.py
-**/*.pyc
+*.pyc
+staticfiles
+.env
+

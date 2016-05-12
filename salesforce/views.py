@@ -11,18 +11,12 @@ from collections import OrderedDict
 import config # holds confidential login infoo
 
 
-# Create your views here.
 def index(request):
-	# query_contacts = query_salesforce()
-	
 	form = SearchForm
 	context = {}
-	# TODO show errors if not valid
-	# show error messages
 	if request.method == 'POST':
 		form = SearchForm(request.POST)
 
-		print "checking if valid"
 		if form.is_valid():
 			form_fields = OrderedDict()
 			form_fields['Department'] = form.cleaned_data['dept_name']
@@ -32,22 +26,12 @@ def index(request):
 			form_fields['FirstName'] = form.cleaned_data['first_name']
 			form_fields['LastName'] = form.cleaned_data['last_name']
 
-			# print "filters chosen:"
-			# print 'Department ' + form_fields['Department']
-			# print 'Account: ' + form_fields['Account'] 
-			# print 'MailingCity: ' + form_fields['MailingCity']
-			# print 'MailingCountry ' + form_fields['MailingCountry']
-			# print 'FirstName ' + form_fields['FirstName']
-			# print 'LastName ' + form_fields['LastName']
-
 			(is_logged_in, sf_conn) = salesforce_login()
-			print "Am I Logged in?", is_logged_in
-			print "sf conn", sf_conn
 			if is_logged_in:
 				query_result = query_salesforce(form_fields, sf_conn)
 				if query_result['totalSize'] > 0:  
 						context['contact_list'] = parse_query_result(query_result)
-						print 'contact list ', context['contact_list']
+						# print 'contact list ', context['contact_list']
 				else: 
 					context['error_msg'] = "No results were returned."
 			else:
@@ -82,15 +66,15 @@ def query_salesforce(form_fields, sf_conn):
 				else:
 					query_where = query_where + key + \
 								'=\'' + value + '\''
-		print "query where" + query_where
+		# print "query where" + query_where
 
 		query = "SELECT " + query_select + \
 			" FROM " + query_from + \
 			" WHERE " + query_where 
-		print 'query is:\n' + query
+		# print 'query is:\n' + query
 
 		query_result = sf_conn.query_all(query)
-		print "query result: ", query_result
+		# print "query result: ", query_result
 		return query_result
 	else:
 		return
@@ -98,17 +82,16 @@ def query_salesforce(form_fields, sf_conn):
 def salesforce_login():
 	loginInfo = ()
 	try: 
-		print config.USERNAME
 		sf = Salesforce(
 			username=config.USERNAME, 
 			password=config.PASSWORD,
 			security_token=config.SECURITY_TOKEN,
 			)
-		print "\nLogged in\n"
+		# print "\nLogged in\n"
 		loginInfo = (True, sf)
 	# exception SalesforceAuthenticationFailed doesn't work, need to use wildcard
 	except: 
-		print "Salesforce login error. Cannot login."
+		# print "Salesforce login error. Cannot login."
 		loginInfo = (False, None)
 		raise 
 	finally:
@@ -123,7 +106,6 @@ def parse_query_result(query_result):
 			contact['Name'] = obj['Name']
 			contact['Email'] = obj['Email']
 			contact['AccountName'] = obj['Account']['Name']
-			print "\ncontact: ", contact
 			contact_list.append(contact)
 		return contact_list
 	else: 
