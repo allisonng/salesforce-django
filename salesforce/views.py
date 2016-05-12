@@ -89,9 +89,9 @@ def salesforce_login():
 		# 	security_token=config.SECURITY_TOKEN,
 		# 	)
 		sf = Salesforce(
-			username=os.environ['sfUsername'],
-			password=os.environ['sfPassword']
-			security_token=os.environ['sfSecurityToken'],
+			username=os.environ['SF_USERNAME'],
+			password=os.environ['SF_PASSWORD'],
+			security_token=os.environ['SF_SECURITYTOKEN'],
 			)
 		# print "\nLogged in\n"
 		loginInfo = (True, sf)
