@@ -8,8 +8,9 @@ from django.template import loader
 from simple_salesforce import Salesforce
 
 from collections import OrderedDict
-import config # holds confidential login infoo
 
+# import config # holds confidential login infoo
+import os
 
 def index(request):
 	form = SearchForm
@@ -82,10 +83,15 @@ def query_salesforce(form_fields, sf_conn):
 def salesforce_login():
 	loginInfo = ()
 	try: 
+		# sf = Salesforce(
+		# 	username=config.USERNAME, 
+		# 	password=config.PASSWORD,
+		# 	security_token=config.SECURITY_TOKEN,
+		# 	)
 		sf = Salesforce(
-			username=config.USERNAME, 
-			password=config.PASSWORD,
-			security_token=config.SECURITY_TOKEN,
+			username=os.environ['sfUsername'],
+			password=os.environ['sfPassword']
+			security_token=os.environ['sfSecurityToken'],
 			)
 		# print "\nLogged in\n"
 		loginInfo = (True, sf)

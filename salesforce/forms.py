@@ -40,7 +40,6 @@ class SearchForm(forms.Form):
 	account_name = forms.CharField(label=field_choices['Account'],
 							max_length=100,
  							required=False,
- 							initial='EA ',
  							)
 	city_name = forms.CharField(label=field_choices['MailingCity'],
 							max_length=100,
