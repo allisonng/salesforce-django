@@ -29,13 +29,13 @@ def index(request):
 			(is_logged_in, sf_conn) = salesforce_login()
 			if is_logged_in:
 				query_result = query_salesforce(form_fields, sf_conn)
-				if query_result['totalSize'] > 0:  
+				if query_result and query_result['totalSize'] > 0:  
 						context['contact_list'] = parse_query_result(query_result)
 						# print 'contact list ', context['contact_list']
 				else: 
 					context['error_msg'] = "No results were returned."
 			else:
-				context['error_msg'] = "Cannot login" 
+				context['error_msg'] = "Cannot login." 
 
 	context['form'] = form
 	return render(request, 'salesforce/index.html', context)
@@ -51,6 +51,7 @@ def query_salesforce(form_fields, sf_conn):
 		for key, value in form_fields.items():
 			# print '\nkey ' + key + ' value ' + value
 			if value:
+				print 'value: ' + value
 				#if query_where already has value in it
 
 				if query_where:
@@ -66,11 +67,16 @@ def query_salesforce(form_fields, sf_conn):
 		query = "SELECT " + query_select + \
 			" FROM " + query_from + \
 			" WHERE " + query_where 
-		# print 'query is:\n' + query
+		print 'query is:\n' + query
 
-		query_result = sf_conn.query_all(query)
-		# print "query result: ", query_result
-		return query_result
+		query_result = {}
+		try:
+			query_result = sf_conn.query_all(query)
+			print "query result: ", query_result
+		except: 
+			print "Salesforce query error."	
+		finally:
+			return query_result
 	else:
 		return
 
@@ -86,7 +92,7 @@ def salesforce_login():
 		loginInfo = (True, sf)
 	# exception SalesforceAuthenticationFailed doesn't work, need to use wildcard
 	except: 
-		# print "Salesforce login error. Cannot login."
+		print "Salesforce login error. Cannot login."
 		loginInfo = (False, None)
 		raise 
 	finally:
