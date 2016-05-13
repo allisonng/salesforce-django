@@ -2,7 +2,6 @@ from django import forms
 from collections import OrderedDict
 import re
 
-# our new form
 class SearchForm(forms.Form):
 
 	field_choices = OrderedDict()
@@ -46,6 +45,8 @@ class SearchForm(forms.Form):
 		for field_value in cleaned_data.itervalues():
 			if field_value:
 				re.sub(r'([^\s\w]|_)+', '', field_value)
+				# re.sub(r'[^a-zA-Z\s]+','', field_value)
+				# re.sub(r'[\W_]+', '', field_value, flags=re.LOCALE)
 				isFormEmpty = False
 		if isFormEmpty:
 			raise forms.ValidationError('You must input at least one value', code='invalid')

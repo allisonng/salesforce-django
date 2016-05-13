@@ -1,12 +1,13 @@
 {% extends 'base_template.html' %}
 
+{% block title %}Quick Contact Search{% endblock %}
+
 {% block content %}
 	
 	<h1>Quick Contact Search</h1>  
 
 	<p><h3>About this app</h3>
 	<ul>
-		<li>The goal of this was: 'make a simple web app that loads data from Salesforce API'</li>
 		<li>Partial input is accepted (E.g. Last name 'Bo' will return you Lauren Boyle and John Boyle)
 		<li><b>limited datset of 24 contacts</b></li>
 		<li>Example Departments: (Finance, Technology, Administration, Production, Facilities, Operations)</li>
@@ -22,7 +23,6 @@
 		    {% for error in form.non_field_errors %}
 		        <div class="alert alert-error">
 		        </div>
-			<!--<strong>{{ error|escape }}</strong> repeats itself otherwise-->
 		    {% endfor %}
 		{% endif %}
 		<button type='submit' value='submit'>Search!</button>

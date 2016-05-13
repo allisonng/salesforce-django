@@ -10,10 +10,10 @@ from .forms import SearchForm
 
 import os
 
-
 def index(request):
 	form = SearchForm
 	context = {}
+	
 	if request.method == 'POST':
 		form = SearchForm(request.POST)
 
@@ -30,8 +30,7 @@ def index(request):
 			if is_logged_in:
 				query_result = query_salesforce(form_fields, sf_conn)
 				if query_result and query_result['totalSize'] > 0:  
-						context['contact_list'] = parse_query_result(query_result)
-						# print 'contact list ', context['contact_list']
+					context['contact_list'] = parse_query_result(query_result)
 				else: 
 					context['error_msg'] = "No results were returned."
 			else:
@@ -41,18 +40,13 @@ def index(request):
 	return render(request, 'salesforce/index.html', context)
 
 def query_salesforce(form_fields, sf_conn):
-	# sf being the salesforce connection
-
 
 	if sf_conn:
 		query_select = "Id, Name, Phone, Email, Account.Name"
 		query_from = 'Contact'
 		query_where = ''
 		for key, value in form_fields.items():
-			# print '\nkey ' + key + ' value ' + value
 			if value:
-				print 'value: ' + value
-				#if query_where already has value in it
 
 				if query_where:
 					query_where += " AND "
@@ -62,17 +56,14 @@ def query_salesforce(form_fields, sf_conn):
 				else:
 					query_where = query_where + key + \
 								' LIKE \'' + value + '%\''
-		# print "query where" + query_where
 
 		query = "SELECT " + query_select + \
 			" FROM " + query_from + \
 			" WHERE " + query_where 
-		print 'query is:\n' + query
 
 		query_result = {}
 		try:
 			query_result = sf_conn.query_all(query)
-			print "query result: ", query_result
 		except: 
 			print "Salesforce query error."	
 		finally:
@@ -88,7 +79,6 @@ def salesforce_login():
 			password=os.environ['SF_PASSWORD'],
 			security_token=os.environ['SF_SECURITYTOKEN'],
 			)
-		# print "\nLogged in\n"
 		loginInfo = (True, sf)
 	# exception SalesforceAuthenticationFailed doesn't work, need to use wildcard
 	except: 
@@ -111,35 +101,3 @@ def parse_query_result(query_result):
 		return contact_list
 	else: 
 		return
-
-
-'''
-	To get First name of first contact:
-	name = query['records'][0]['firstName'] (inner ordereddict is a list)
-	[0] being first contact in list
-	[1] being 2nd...
-
-	each item in query['records'] is a contact dict (first name being an attr)
-
-	OrderedDict(
-	[(u'totalSize', 2),
-	(u'done', True),
-	(u'records', [OrderedDict([
-		(u'attributes', OrderedDict([(u'type', u'Contact'), (u'url', u'/services/data/v29.0/sobjects/Contact/0033600000DAcYGAA1')])), 
-		(u'Id', u'0033600000DAcYGAA1'), 
-		(u'Name', u'Olivia Wilde'), 
-		(u'Email', u'oliviawilde@eagames.ca'), 
-		(u'Account', OrderedDict([(u'attributes', OrderedDict([(u'type', u'Account'), (u'url', u'/services/data/v29.0/sobjects/Account/0013600000JDa19AAD')])), (u'Name', u'EA Games')])
-	  	)]), 
-		OrderedDict([
-			(u'attributes', OrderedDict([(u'type', u'Contact'), (u'url', u'/services/data/v29.0/sobjects/Contact/0033600000CaRlaAAF')])), 
-			(u'Id', u'0033600000CaRlaAAF'), 
-			(u'Name', u'John Smith'), 
-			(u'Email', u'jonsthebomb@gmail.com'), 
-			(u'Account', OrderedDict([(u'attributes', OrderedDict([(u'type', u'Account'), (u'url', u'/services/data/v29.0/sobjects/Account/0013600000JDa19AAD')])), (u'Name', u'EA Games')]))])
-		]
-	)]
-
-	)
-
-'''
